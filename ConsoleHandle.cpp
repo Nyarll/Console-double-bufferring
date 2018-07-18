@@ -30,6 +30,7 @@ CONSOLE getInstance(void)
 		Console->deleteConsoleHandle = _deleteConsoleHandle;
 		Console->print = _print;
 		Console->clearScreen = _clearScreen;
+		Console->getHandle = getHandle;
 	}
 	return Console;
 }
@@ -88,7 +89,7 @@ static void _print(const char str[],COORD coord)
 
 	//COORD coord = { 0, 0 };                                                             //書き込みを開始する位置 x:0y:0に設定
 	COORD size = { screenInfo.dwSize.X,screenInfo.dwSize.Y };                           //サイズ
-	SMALL_RECT rect = { coord.X, coord.Y, screenInfo.dwSize.X, screenInfo.dwSize.Y };   //書き込む箇所を矩形で指定
+	SMALL_RECT rect = { coord.X, coord.Y, size.X, size.Y };   //書き込む箇所を矩形で指定
 	int length = strlen(str);                                                           //文字の長さ
 	for (int y = 0; y < screenInfo.dwSize.Y; ++y)
 	{
