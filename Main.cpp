@@ -22,12 +22,18 @@ int main(void)
 	Mouse mouse;
 
 	COORD coord = { 0,0 };
+	COORD size = { 0,0 };
 
 	SHORT x = 3, y = 22;
 
 	int cnt = 0;
 
+	BOOL j_flag = FALSE;
+
+	SHORT vy = 0, ay = 0;
+
 	getInstance()->createConsoleHandle(); //初期化処理
+	SetCursorVisibility(CURSOR_INVISIBLE);
 
 	SetConsoleTitle(TEXT("console game"));
 	//SetScreenSize(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -40,23 +46,11 @@ int main(void)
 		//GetCursorPosition(&mouse.x, &mouse.y);
 
 		getInstance()->clearScreen(); //画面のクリア
-
+		SetCursorPosition(0, 0);
 		//ClearScreen();
 		// 実質ClearScreen
 		//FillConsoleOutputCharacter(screen_data.hOutput, ' ', (screen_data.screenSize.X * screen_data.screenSize.Y), { 0,0 }, &word_num_buf);
 		//FillConsoleOutputAttribute(screen_data.hOutput, screen_data.textAttributes, (screen_data.screenSize.X * screen_data.screenSize.Y), {0,0}, &word_num_buf);
-
-		coord = { x,y };
-		getInstance()->print("|", coord);
-
-		coord = { x + 1,y };
-		getInstance()->print(" ", coord);
-
-		coord = { x,y + 3 };
-		getInstance()->print(" ", coord);
-
-		coord = { 0,25 };
-		getInstance()->print("1", coord);		//文字を出力
 
 		// 左右の移動
 		if (GetKeyInput() == KEY_LEFT)
@@ -68,15 +62,41 @@ int main(void)
 			x += 1;
 		}
 		
-		// 上下移動？
+		/*if ((GetKeyInput() == KEY_SPACE) && (!j_flag))
+		{
+			j_flag = TRUE;
+		}*/
+		
+		if (j_flag)
+		{
+			if (y > 18)
+			{
+				vy = -1;
+			}
+			else
+			{
+				j_flag = FALSE;
+				vy = 1;
+			}
+		}
+
 		if (GetKeyInput() == KEY_UP)
 		{
-			y -= 1;
+			vy -= 1;
 		}
-		if (GetKeyInput() == KEY_DOWN)
+
+		//vy += ay;
+		//y += vy;
+
+		//if(y)
+
+		if ((y + 3) < 25)
 		{
-			y += 1;
+			y = 22;
+			vy = 0;
 		}
+
+		//x -= 1;
 
 		// 画面外に出たら反対側から出てくる
 		if (x > 119)
@@ -88,12 +108,40 @@ int main(void)
 			x = 119;
 		}
 
+		if (y > 30)
+		{
+			x = 0;
+		}
+		if (x < 0)
+		{
+			y = 30;
+		}
+
+
 		if (GetKeyInput() == KEY_ESC)
 		{
 			EXIT;
 		}
 		cnt++;
 
+		// Render
+
+		coord = { x,y };
+		size = { x + 1,y + 3 };
+		getInstance()->print("|", coord, size);
+
+		/*coord = { x + 1,y };
+		size = 
+		getInstance()->print(" ", coord);*/
+
+		/*coord = { x,y + 3 };
+		getInstance()->print(" ", coord);*/
+
+		coord = { 0,25 };
+		size = { 120,30 };
+		getInstance()->print("1", coord, size);		//文字を出力
+
+		// Flip
 		getInstance()->swapConsoleHandle();		//コンソールハンドルを入れ替え
 
 		//Sleep(50);
